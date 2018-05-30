@@ -18,7 +18,7 @@ int main(){
     pthread_t deliveryClients[DELIVERY_CLIENTS];
     pthread_t deliveryMotoboys[MOTOBOYS];
 
-    // Semaphores initializations
+    // Initializing sempahores
     sem_init(&sem_restarauntCashier, 0, RESTAURANT_CASHIERS); 
     sem_init(&sem_restaurantMealCashier, 0, MEAL_REST_CASHIERS); 
     sem_init(&sem_drivethruOrder, 0, 1);
@@ -27,7 +27,7 @@ int main(){
     sem_init(&sem_deliveryEmployee, 0, DELIVERY_EMLOYEES);
     sem_init(&sem_motoboy, 0, MOTOBOYS);
 
-    // Thread creations
+    // Creating threads
     for(i = 0; i < RESTAURANT_CLIENTS; i++){
         id = (int *)malloc(sizeof(int));
         *id = i;
