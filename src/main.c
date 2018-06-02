@@ -21,11 +21,23 @@ int main(){
     // Initializing sempahores
     sem_init(&sem_restarauntCashier, 0, RESTAURANT_CASHIERS); 
     sem_init(&sem_restaurantMealCashier, 0, MEAL_REST_CASHIERS); 
-    sem_init(&sem_drivethruOrder, 0, 1);
+    sem_init(&sem_drivethruOrder, 0, 0);
     sem_init(&sem_drivethruPayment, 0, 0); 
     sem_init(&sem_drivethruTakeOrder, 0, 0);
     sem_init(&sem_deliveryEmployee, 0, DELIVERY_EMLOYEES);
     sem_init(&sem_motoboy, 0, MOTOBOYS);
+    for(i = 0; i < RESTAURANT_CASHIERS; i++){
+        sem_init(&sem_wakeCashier[i], 0, 0);
+    }
+    for(i = 0; i < MEAL_REST_CASHIERS; i++){
+        sem_init(&sem_wakeMealCashier[i], 0, 0);
+    }
+    for(i = 0; i < DELIVERY_EMLOYEES; i++){
+        sem_init(&sem_wakeDeliveryEmployee[i], 0, 0);
+    }
+    for(i = 0; i < MOTOBOYS; i++){
+        sem_init(&sem_wakeMotoboy[i], 0, 0);
+    }
 
     // Creating threads
     for(i = 0; i < RESTAURANT_CLIENTS; i++){
