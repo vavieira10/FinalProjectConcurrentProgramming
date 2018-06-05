@@ -18,7 +18,9 @@ int main(){
     pthread_t deliveryClients[DELIVERY_CLIENTS];
     pthread_t deliveryMotoboys[MOTOBOYS];
 
-    // Initializing sempahores
+    srand(time(NULL));
+
+    // Initializing sempahores and other variables
     sem_init(&sem_restarauntCashier, 0, RESTAURANT_CASHIERS); 
     sem_init(&sem_restaurantMealCashier, 0, MEAL_REST_CASHIERS); 
     sem_init(&sem_drivethruOrder, 0, 0);
@@ -38,6 +40,18 @@ int main(){
     for(i = 0; i < MOTOBOYS; i++){
         sem_init(&sem_wakeMotoboy[i], 0, 0);
     }
+    for(i = 0; i < DELIVERY_CLIENTS; i++){
+        deliveryQueue[i].clientId = -1;
+        deliveryQueue[i].flag = 0;
+        sem_init(&sem_sleepClientDelivery[i], 0, 0);
+    }
+    for(i = 0; i < RESTAURANT_CLIENTS; i++){
+        restaurantQueue[i].clientId = -1;
+        restaurantQueue[i].flag = 0;
+        sem_init(&sem_sleepClientRestaurant[i], 0, 0);
+    }
+    amountQueueDelivery = 0;
+    amountQueueRestaurant = 0;
 
     // Creating threads
     for(i = 0; i < RESTAURANT_CLIENTS; i++){
@@ -82,6 +96,11 @@ int main(){
     pthread_create(&drivethruTakeOrders, NULL, drivethruOrder, NULL);
 
     pthread_join(restaurantClients[0], NULL);
+    pthread_join(restaurantCashiers[0], NULL);
+    pthread_join(restaurantMealReady[0], NULL);
+    pthread_join(drivethruCars[0], NULL);
+    pthread_join(deliveryEmployees[0], NULL);
+    pthread_join(deliveryMotoboys[0], NULL);
     pthread_join(drivethruOrders, NULL);
     pthread_join(drivethruPayments, NULL);
     pthread_join(drivethruTakeOrders, NULL);

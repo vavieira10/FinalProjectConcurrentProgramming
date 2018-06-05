@@ -19,18 +19,18 @@ void *deliveryClient(void *arg){
         printf("DELIVERY - CLIENTE %d\n", clientId);
         printf("CLIENTE DELIVERY %d| Ligando para o atendimento do delivery\n", clientId);
 
-        // checking if there's another car ordering, if there's any
-        // the thread will be blocked until is his turn
-        pthread_mutex_lock(&lock_driveThruOrder);
-        sem_post(&sem_drivethruOrder); 
-        // if there's no one, the customer in the car will order his meal
-        printf("CLIENTE DELIVERY %d| Fazendo o pedido no caixa de pedidos\n", clientId);
-        zsleep(10);
-        pthread_mutex_unlock(&lock_driveThruOrder);
-        printf("CLIENTE DELIVERY %d| Fez o pedido, indo para o caixa de pagamento se nao tiver ninguem\n", clientId);
+        // calling for the delivery service  and 
+        // checking if there's a customer avaiable
+        sem_wait(&sem_deliveryEmployee);
+        sem_post(&sem_wakeDeliveryEmployee[genRandomValue(0, DELIVERY_EMLOYEES - 1)]); // wakes the thread of a random customer 
+        // if there's any customer avaiable, the client complete his call
+        printf("CLIENTE DELIVERY %d| Atendente atendeu o telefone\n", clientId);
         sleep(3);
-        
-        pthread_mutex_lock(&lock_drivethruPayment);
+        printf("CLIENTE DELIVERY %d| Fazendo o pedido para o atendente do delivery\n", clientId);
+        sleep(10);
+        printf("CLIENTE DELIVERY %d| Fez o pedido, aguardando o motoboy chegar\n", clientId);
+        sleep(3);
+        sem_wait(&sem_sleepClientDelivery[clientId]);
         sem_post(&sem_drivethruPayment);
         // if there's no one, the customer will pay for his meal
         printf("CLIENTE DELIVERY %d| Pagando a refeicao no caixa de pagamentos\n", clientId);

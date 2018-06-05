@@ -18,6 +18,23 @@
 #define DELIVERY_EMLOYEES 3
 #define MOTOBOYS 4
 
+// Structs to be used as queues for both delivery and restaurant threads
+typedef struct {
+    int clientId;
+    int flag;
+}queue;
+
+
+queue deliveryQueue[DELIVERY_CLIENTS];
+queue restaurantQueue[RESTAURANT_CLIENTS];
+int amountQueueDelivery;
+int amountQueueRestaurant;
+
+// Function that generates an value between the range [minValue, maxValue]
+int genRandomValue(int minValue, int maxValue){
+    return (rand() % (maxValue - minValue + 1)) + minValue;
+}
+
 // Semaphores definitions to be used
 sem_t sem_restarauntCashier;
 sem_t sem_wakeCashier[RESTAURANT_CASHIERS];
@@ -39,5 +56,8 @@ sem_t sem_wakeDeliveryEmployee[DELIVERY_EMLOYEES];
 
 sem_t sem_motoboy;
 sem_t sem_wakeMotoboy[MOTOBOYS];
+
+sem_t sem_sleepClientDelivery[DELIVERY_CLIENTS];
+sem_t sem_sleepClientRestaurant[RESTAURANT_CLIENTS];
 
 #endif
