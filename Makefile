@@ -123,6 +123,33 @@ main/fast:
 	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/build
 .PHONY : main/fast
 
+src/auxiliar.o: src/auxiliar.c.o
+
+.PHONY : src/auxiliar.o
+
+# target to build an object file
+src/auxiliar.c.o:
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/auxiliar.c.o
+.PHONY : src/auxiliar.c.o
+
+src/auxiliar.i: src/auxiliar.c.i
+
+.PHONY : src/auxiliar.i
+
+# target to preprocess a source file
+src/auxiliar.c.i:
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/auxiliar.c.i
+.PHONY : src/auxiliar.c.i
+
+src/auxiliar.s: src/auxiliar.c.s
+
+.PHONY : src/auxiliar.s
+
+# target to generate assembly for a file
+src/auxiliar.c.s:
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/auxiliar.c.s
+.PHONY : src/auxiliar.c.s
+
 src/delivery.o: src/delivery.c.o
 
 .PHONY : src/delivery.o
@@ -240,6 +267,9 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... main"
+	@echo "... src/auxiliar.o"
+	@echo "... src/auxiliar.i"
+	@echo "... src/auxiliar.s"
 	@echo "... src/delivery.o"
 	@echo "... src/delivery.i"
 	@echo "... src/delivery.s"
