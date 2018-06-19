@@ -13,7 +13,6 @@ void *drivethruCar(void *arg){
     int carId = *(int*) arg;
 
     while(1){
-        printf("%sDRIVE-THRU - CARRO %d %s\n", ANSI_COLOR_RED, carId, RESET_COLOR);
         printf("%sCARRO %d| Entrando na fila do drive-thru %s\n", ANSI_COLOR_RED, carId, RESET_COLOR);
 
         // checking if there's another car ordering, if there's any
@@ -52,7 +51,6 @@ void *drivethruCar(void *arg){
 void *drivethruOrder(void *arg){
 
     while(1){
-        printf("%sDRIVE-THRU - CAIXA DE PEDIDOS %s\n", ANSI_COLOR_RED, RESET_COLOR);
         printf("%sDRIVE-THRU CAIXA DE PEDIDOS| Aguardando carros %s\n", ANSI_COLOR_RED, RESET_COLOR);
         sem_wait(&sem_drivethruOrder);
         printf("%sDRIVE-THRU CAIXA DE PEDIDOS| Carro chegou para ser atendido %s\n", ANSI_COLOR_RED, RESET_COLOR);
@@ -69,7 +67,6 @@ void *drivethruOrder(void *arg){
 void *drivethruPayment(void *arg){
 
    while(1){
-        printf("%sDRIVE-THRU - CAIXA DE PAGAMENTO %s\n", ANSI_COLOR_RED, RESET_COLOR);
         printf("%sDRIVE-THRU CAIXA DE PAGAMENTO| Aguardando carros %s\n", ANSI_COLOR_RED, RESET_COLOR);
         sem_wait(&sem_drivethruOrder);
         printf("%sDRIVE-THRU CAIXA DE PAGAMENTO| Carro chegou para pagar o pedido %s\n", ANSI_COLOR_RED, RESET_COLOR);

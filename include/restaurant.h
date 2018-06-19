@@ -15,7 +15,7 @@
 #define ANSI_COLOR_BLUE    "\x1b[34m"
 #define RESET_COLOR "\033[0m"
 
-pthread_mutex_t mutexRestaurant;
+pthread_mutex_t mutexRestaurant, mutexRestaurant2, mutexRestaurant3, mutexRestaurant4;
 
 sem_t sem_restaurantCashier;
 sem_t sem_wakeCashier[RESTAURANT_CASHIERS];

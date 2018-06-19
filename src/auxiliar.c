@@ -6,7 +6,7 @@ int checkWhichIsUsed(int *array, int arraySize){
     int i = 0;
 
     for(i = 0; i < arraySize; i++){
-        if(array[i]){
+        if(array[i] == 1){
             return i;
         }
     }

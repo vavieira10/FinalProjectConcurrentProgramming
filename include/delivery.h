@@ -15,8 +15,7 @@
 #define ANSI_COLOR_GREEN   "\033[32m"
 #define RESET_COLOR "\033[0m"
 
-pthread_mutex_t mutexDelivery1;
-pthread_mutex_t mutexDelivery2;
+pthread_mutex_t mutexDelivery, mutexDelivery2, mutexDelivery3, mutexDelivery4;
 
 sem_t sem_deliveryEmployee;
 sem_t sem_wakeDeliveryEmployee[DELIVERY_EMLOYEES];

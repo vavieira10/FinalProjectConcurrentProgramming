@@ -1,18 +1,23 @@
 #include "restaurant.h"
 
 pthread_mutex_t mutexRestaurant = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t mutexRestaurant2 = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t mutexRestaurant3 = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t mutexRestaurant4 = PTHREAD_MUTEX_INITIALIZER;
 
 void *restaurantClient(void *arg){
     int clientId = *(int*) arg;
     int cashierToAwake = 0;
 
     while(1){
-        printf("%sRESTAURANTE - CLIENTE %d %s\n", ANSI_COLOR_BLUE, clientId, RESET_COLOR);
         printf("%sCLIENTE RESTAURANTE %d| Chegando no restaurante e vendo se tem caixa disponivel %s\n", ANSI_COLOR_BLUE, clientId, RESET_COLOR);
 
         // Arrives at the restarant and checks if theres any cashier avaiable
         sem_wait(&sem_restaurantCashier);
+        pthread_mutex_lock(&mutexRestaurant2);
         cashierToAwake = checkWhichIsUsed(freeRestaurantCashier, RESTAURANT_CASHIERS);
+        freeRestaurantCashier[cashierToAwake] = 0;
+        pthread_mutex_unlock(&mutexRestaurant2);
         sem_post(&sem_wakeCashier[cashierToAwake]); // wakes the thread of a free cashier 
 
         // if there's any cashier avaiable, the client does his order
@@ -21,12 +26,12 @@ void *restaurantClient(void *arg){
         printf("%sCLIENTE RESTAURANTE %d| Fazendo o pedido para o caixa %s\n", ANSI_COLOR_BLUE, clientId, RESET_COLOR);
         sleep(5);
         printf("%sCLIENTE RESTAURANTE %d| Esperando o pedido ficar pronto %s\n", ANSI_COLOR_BLUE, clientId, RESET_COLOR);
-        sleep(2);
-
         // will be blocked until the meal is ready
         pthread_mutex_lock(&mutexRestaurant);
         orderClientRestaurant[clientId] = 1;
         pthread_mutex_unlock(&mutexRestaurant);
+
+        sleep(3);
         sem_wait(&sem_sleepClientRestaurant[clientId]);
 
         printf("%sCLIENTE RESTAURANTE %d| Lanche pronto, pegando o lanche %s\n", ANSI_COLOR_BLUE, clientId, RESET_COLOR);
@@ -43,7 +48,6 @@ void *restaurantCashier(void *arg){
     int mealReadyCashier = 0;
 
     while(1){
-        printf("%s RESTAURANTE - CAIXA %d %s\n", ANSI_COLOR_BLUE, cashierId, RESET_COLOR);
         printf("%sCAIXA RESTAURANTE %d| Esperando clientes %s\n", ANSI_COLOR_BLUE, cashierId, RESET_COLOR);
 
         // the cashier employee is blocked until a client calls him
@@ -56,11 +60,14 @@ void *restaurantCashier(void *arg){
         sem_wait(&sem_restaurantMealCashier);
 
         // waking the meal cashier
+        pthread_mutex_lock(&mutexRestaurant3);
         mealReadyCashier = checkWhichIsUsed(freeMealReady, MEAL_REST_CASHIERS);
+        freeMealReady[mealReadyCashier] = 0;
+        pthread_mutex_unlock(&mutexRestaurant3);
         sem_post(&sem_wakeMealCashier[mealReadyCashier]);
+        freeRestaurantCashier[cashierId] = 1;
         printf("%sCAIXA RESTAURANTE %d| Mandou o pedido para o caixa de entrega de pedidos %d %s\n", ANSI_COLOR_BLUE, cashierId, mealReadyCashier, RESET_COLOR);
         sleep(2);
-        freeRestaurantCashier[cashierId] = 1;
         sem_post(&sem_restaurantCashier);
     }
    
@@ -72,13 +79,16 @@ void *restaurantMealReadyCashier(void *arg){
     int orderFromClient = 0;
 
     while(1){
-        printf("%sRESTAURANTE - CAIXA ENTREGA PEDIDO %d %s\n", ANSI_COLOR_BLUE, mealReadyId, RESET_COLOR);
         printf("%sCAIXA ENTREGA PEDIDO RESTAURANTE %d| Esperando algum pedido a ser montado %s\n", ANSI_COLOR_BLUE, mealReadyId, RESET_COLOR);
 
         // the restaurant employee is blocked until a client calls him
         sem_wait(&sem_wakeMealCashier[mealReadyId]);
+        sleep(2);
+        pthread_mutex_lock(&mutexRestaurant4);
         orderFromClient = checkWhichIsUsed(orderClientRestaurant, RESTAURANT_CLIENTS);
-        printf("%sCAIXA ENTREGA PEDIDO RESTAURANTE %d| Pedido para preparar lanche recebido! indo entregar para o cliente %d %s\n", ANSI_COLOR_BLUE, mealReadyId, orderFromClient, RESET_COLOR);
+        orderClientRestaurant[orderFromClient] = -1;
+        pthread_mutex_unlock(&mutexRestaurant4);
+        printf("%sCAIXA ENTREGA PEDIDO RESTAURANTE %d| Pedido para preparar lanche recebido! Indo entregar para o cliente %d %s\n", ANSI_COLOR_BLUE, mealReadyId, orderFromClient, RESET_COLOR);
         sleep(11);
 
         printf("%sCAIXA ENTREGA PEDIDO RESTAURANTE %d| Pedido do cliente %d pronto %s\n", ANSI_COLOR_BLUE, mealReadyId, orderFromClient, RESET_COLOR);
@@ -87,12 +97,8 @@ void *restaurantMealReadyCashier(void *arg){
         sleep(5);
         printf("%sCAIXA ENTREGA PEDIDO RESTAURANTE %d| Entregou para o cliente %d, esperando novos pedidos %s\n", ANSI_COLOR_BLUE, mealReadyId, orderFromClient, RESET_COLOR);
 
-        pthread_mutex_lock(&mutexRestaurant);
-        orderClientRestaurant[orderFromClient] = -1;
-        pthread_mutex_unlock(&mutexRestaurant);
-
-        sleep(2);
         freeMealReady[mealReadyId] = 1;
+        sleep(2);
         sem_post(&sem_restaurantMealCashier);
     }
    
